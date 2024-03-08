@@ -1,0 +1,291 @@
+/*
+PlantUML Source Code depicting UML Class Diagrams of Constructional, Structural, and Behavioural Design Patterns.
+Each class of design patterns is organized into its own package.
+*/
+
+@startuml
+skinparam style strictuml
+skinparam genericDisplay old
+skinparam linetype polyline
+skinparam linetype ortho
+hide empty members
+
+package "Constructional Design Patterns"{
+    skinparam packageBackgroundColor #FFDDAA
+
+    package "Singleton"{
+        class SingletonClient {
+            instance: Singleton.getInstance();
+
+        }
+
+        class Singleton {
+           - self {static}: Singleton
+           - Singleton(): void
+           + getInstance() {static}: Singleton
+           + SingletonOperation(): void
+        }
+
+        Singleton *-- Singleton
+        SingletonClient --[dashed]>"1" Singleton: <<use>>
+
+
+        note top of Singleton
+            When to use: Caching or Synchronizing of an instance
+            Benefits: Singleton ensures you have at most one instance...
+            ...of a class in your application, or for the need of caching data
+            Negatives: Global access to the instance
+        end note
+    }
+
+    package "Abstract Factory"{
+
+            class FactoryClient {
+            }
+
+    class AbstractFactory<<Interface>>{
+        + produce(): IProduct
+    }
+
+    class ProductAFactory implements AbstractFactory
+    class ProductBFactory implements AbstractFactory
+    class ProductCFactory implements AbstractFactory
+
+    interface IProduct <<Interface>>
+    class ProductA implements IProduct
+    class ProductB implements IProduct
+    class ProductC implements IProduct
+
+    FactoryClient --[dashed]>"1..*" AbstractFactory: <<import>>
+    FactoryClient --[dashed]>"1..*" IProduct: <<import>>
+    AbstractFactory --[dashed]> IProduct: <<creates>>
+
+            note top of AbstractFactory
+                When to use: when creating objects of related types, and you want to ensure they are compatible.
+                Benefits: Abstract Factory allows one to create related products of a particular product interface.
+                Then, any implementing factory becomes an interface for creating an object of that interface type...
+                whilst letting subclasses decide which class to instantiate.
+                In short: The Factory Design Pattern lets a class defer instantiation to subclasses.
+            end note
+
+}
+
+package "Builder"{
+
+interface Builder<T> <<Interface>>{
+    + build(): T
+}
+
+class ConcreteBuilder implements Builder{
+    - complexClass: ComplexClass
+    - complexityOne: Basetype
+    - complexityTwo: Basetype
+    - complexityThree: Basetype
+    ...
+    + ConcreteBuilder(): void
+    + build(): ComplexClass
+    + withComplexityOne(Basetype): ConcreteBuilder
+    + withComplexityTwo(Basetype): ConcreteBuilder
+    + withComplexityThree(Basetype): ConcreteBuilder
+    ...()
+
+}
+
+ class ComplexClass{
+    - complexityOne: Basetype
+    - complexityTwo: Basetype
+    - complexityThree: Basetype
+    ...
+    # ComplexClass(Basetype): void
+    # ComplexClass(Basetype, Basetype): void
+    # ComplexClass(Basetype, Basetype, Basetype): void
+    ...()
+    + setComplexityOne(Basetype): void
+    + setComplexityTwo(Basetype): void
+    + setComplexityThree(Basetype): void
+    ...()
+    + getComplexityOne(): Basetype
+    + getComplexityTwo(): Basetype
+    + getComplexityThree(): Basetype
+    ...()
+}
+
+
+            note top of Builder
+                When to use: We have a concrete implementation we want to create an object of, but it may have...
+                 telescoping constructors, complex constructors, or a requirement of multiple constructors for the object.
+                Benefits: When we create a builder we are effectively creating a helper class that helps us make objects of that class that its a builder of more easily.
+            end note
+
+            note top of ConcreteBuilder
+            ConcreteBuilder must instantiate ComplexClass object during...
+             its creation and store it as a instance variable.
+             It is also allowed to instantiate other instance variables if they will always be necessary.
+            end note
+
+            ConcreteBuilder "1" o-- "1..*" ComplexClass
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+@enduml
+
+
+@startuml
+skinparam style strictuml
+skinparam genericDisplay old
+skinparam linetype polyline
+skinparam linetype ortho
+hide empty members
+
+package "Structural Design Patterns" {
+    skinparam packageBackgroundColor #AAFFDD
+
+
+package "Composite"{
+    interface Component <<Interface>>{
+    + operation(): void
+    + add(Component): void
+    + remove(Component): void
+    + getChild(int): Component
+    }
+
+    class Composite implements Component{
+     - children: List<Component>
+    }
+
+    class Leaf implements Component
+
+    class ComponentClient{
+    - rootComponent: Component
+    }
+
+    Component "0..*"--o "1" Composite
+    ComponentClient -->"1" Component
+
+                note bottom of Composite
+                Logic related to composite, then...
+                for each child in children
+                child.operation();
+                end note
+
+                note top of Component
+                What it is: Compose objects into tree structures to represent part-whole hierarchies.
+                Lets clients treat individual objects and composition of objects uniformly.
+
+                When to use: When we have a tree-like structure to traverse of common types and methods.
+                This makes it easier to add new kinds of components to an already-built structure.
+                Makes the client code simple: the caller does not need to know whether the component is simple or complex.
+                It can only take that component and do the intended task. Also, allows easy recursion over the tree.
+
+                The Component class has all the Composite public methods defined for it in order to emphasize transparency over safety.
+                We are aware of the type-safety issues, as leaf nodes do not use those methods, therefore breaking ISP.
+                Defining the child management interface at the root of the class hierarchy gives you transparency, because you can treat...
+                all components uniformly. It costs you safety, however, because clients may try to do meaningless things like add and remove objects from leaves.
+                In this case, we decided to go with transparency over safety.
+                end note
+    }
+
+package "Decorator"{
+
+    interface Component <<Interface>>{
+        + operation(): void
+        }
+
+        class ConcreteComponent implements Component
+
+        class BaseDecorator implements Component{
+            - wrappee: Component
+            + BaseDecorator(Component): void
+            + operation(): void
+        }
+
+        class ConcreteDecorator extends BaseDecorator{
+            + ConcreteDecorator(Component)
+            - extraState: Basetype
+            - extraBehaviour(): void
+        }
+
+         class OtherConcreteDecorator extends BaseDecorator{
+             + OtherConcreteDecorator(Component)
+             - otherExtraState: Basetype
+             - otherExtraBehaviour(): void
+         }
+
+        class DecoratorClient
+
+        Component --* BaseDecorator
+        Component <-- BaseDecorator
+        DecoratorClient --[dashed]> Component: <<import>>
+
+
+        note top of Component
+        What it is: Attach additional responsibilities to...
+        an object dynamically. Provide a flexible alternative...
+        to sub-classing for extending functionality.
+
+        When to use: when you need to add functionality to a single...
+        object and leave others like it unmodified during runtime...
+        Use the pattern when it’s awkward or not possible to extend...
+        an object’s behavior using inheritance.
+
+
+        The decorator design pattern is used to change an object’s...
+         functionality during runtime. Other instances of the...
+          same class will be unaffected.
+          NOTE: Sometimes, Decorator is referred to as Wrapper.
+          end note
+
+          note bottom of ConcreteDecorator
+          “Wrapper” is the alternative nickname for the Decorator pattern that clearly expresses the main idea of the pattern.
+          A wrapper is an object that can be linked with some target object.
+          The wrapper contains the same set of methods as the target and delegates to it all requests it receives.
+          However, the wrapper may alter the result by doing something either before or after it passes the request to the target.
+          Generally, it executes some addedBehaviour(); before or after executing its parents operation();
+          NOTE: The extraState instance variable may only be needed in certain contexts, the pattern can work without it in general.
+          The extra state instance variable can be useful to store additional information about the wrapped object if needed.
+          end note
+
+          note right of BaseDecorator
+          The decorator implements the same interface as the decorated (wrapped) object...
+          therefore from the perspective of the client, the wrapped object and the original object are identical.
+          We do this by making the decorator's instance variable accept any object that follows that interface.
+          This lets us cover the object in multiple wrappers, adding the combined behaviour of all wrappers to it.
+          NOTE: The base decorator is required to delegate all work to the wrapped object.
+          end note
+
+
+
+    }
+
+package "Facade"{
+
+    }
+
+
+}
+
+@enduml
+
+@startuml
+skinparam style strictuml
+skinparam genericDisplay old
+skinparam linetype polyline
+skinparam linetype ortho
+hide empty members
+
+package "Behavioural Design Patterns" {
+    skinparam packageBackgroundColor #DDAAFF
+}
+
+@enduml
