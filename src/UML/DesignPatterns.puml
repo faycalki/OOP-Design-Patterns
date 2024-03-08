@@ -270,6 +270,71 @@ package "Decorator"{
 
 package "Facade"{
 
+    class Facade{
+    - linksToSubsystems
+    - additionalFacade: Facade
+    - optionalAdditionalFacade: Facade
+    + subsystemsOperation()
+    }
+
+    class AdditionalFacade{
+    ...
+    + anotherOperation()
+
+    }
+
+package "Subsystem" {
+    class SubsystemInterfaceOne
+
+    class SubsystemInterfaceTwo
+
+    class SubsystemInterfaceThree
+
+    class SubsysteminterfaceFour
+
+}
+
+package "Other Subsystem"{
+    class OtherSubSystemOne
+
+    class OtherSubSystemTwo
+
+}
+    class FacadeClient
+
+    note top of Facade
+    What it is: Facade provides a simplified interface to a library, a framework, or any other complex set of classes.
+    When to use:  Use the Facade pattern when you need to have a limited but straightforward interface to a complex subsystem.
+
+    Having a facade is handy when you need to integrate your app with a sophisticated library that has...
+     dozens of features, but you just need a tiny bit of its functionality. It is also useful when there is more than...
+      1 Subsystem interface the client has to interact with.
+    Condition: The Facade can deal with any positive integer number of Subsystems larger than 1.
+
+     The facade provides a convenient access to a particular part of the...
+     subsystem's functionality. It knows where to direct the client's request...
+     and how to operate all the moving parts.
+    end note
+
+    note left of FacadeClient
+    The client interacts with the facade and the facade...
+     interface is responsible for calling functions of the existing...
+      subsystem(s). This reduces the complexity in interfacing...
+       with a particular part of the system.
+    end note
+
+    Facade --> AdditionalFacade
+    Facade --> SubsystemInterfaceOne
+    Facade --> SubsystemInterfaceTwo
+    Facade --> SubsystemInterfaceThree
+    Facade --> SubsysteminterfaceFour
+    FacadeClient --[dashed]> Facade: <<use>>
+
+    AdditionalFacade --> OtherSubSystemOne
+    AdditionalFacade --> OtherSubSystemTwo
+
+
+
     }
 
 
