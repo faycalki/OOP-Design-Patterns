@@ -40,7 +40,7 @@ Feel free to explore the repository, review the UML diagrams, and examine the im
 
 ## Contributing
 
-If you'd like to contribute to this repository, please follow the guidelines outlined in [CONTRIBUTING.md](CONTRIBUTING.md). Contributions may include additional design pattern implementations, improvements to existing code, or enhancements to the documentation.
+If you'd like to contribute to this repository, please follow the guidelines outlined in [CONTRIBUTING.md](CONTRIBUTING.md) after the guidelines have been submitted. Contributions may include additional design pattern implementations, improvements to existing code, or enhancements to the documentation.
 
 ## License
 
